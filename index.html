@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>土味情话</title>
+
+<style>
+body{
+    margin:0;
+    padding:0;
+    background:linear-gradient(to bottom,#f0f7ff,#ffffff);
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:"楷体";
+}
+
+.card{
+    width:90%;
+    max-width:760px;
+    background:white;
+    padding:35px;
+    border-radius:18px;
+    box-shadow:0 0 15px rgba(0,0,0,0.12);
+    position: relative;
+}
+
+.text{
+    font-size:42px;
+    color:#2c3e50;
+    line-height:1.9;
+}
+
+.line{
+    margin-bottom:22px;
+    text-indent:10px;
+}
+
+.line:last-child{
+    margin-bottom:0;
+}
+
+/* 右下角极简复制按钮 */
+.copy-btn{
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    font-size: 14px;
+    color: #666;
+    background: rgba(0,0,0,0.06);
+    border: none;
+    padding: 6px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+/* 手指按上去时的效果 */
+.copy-btn:active{
+    opacity: 1;
+}
+</style>
+
+</head>
+
+<body onclick="load()">
+
+<div class="card">
+
+    <div id="text" class="text">加载中...</div>
+
+    <!-- 右下角小复制按钮 -->
+    <button class="copy-btn" onclick="copyText(event)">复制</button>
+
+</div>
+
+<script>
+let currentText = "";
+
+function formatDialogue(data){
+
+    // 去掉最外层双引号
+    data = data.replace(/^"+|"+$/g, "");
+
+    // 处理 \n 换行
+    data = data.replace(/\\n/g, "\n");
+
+    currentText = data;
+
+    let lines = data.split("\n");
+
+    let html = "";
+
+    for(let line of lines){
+        if(line.trim() !== ""){
+            html += "<div class='line'>" + line + "</div>";
+        }
+    }
+
+    return html;
+}
+
+function load(){
+    fetch("https://www.lifves.com/api/v1/tricks/rand.html")
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("text").innerHTML = formatDialogue(data);
+    });
+}
+
+// 复制功能
+function copyText(e){
+    e.stopPropagation();   // 防止触发“点击屏幕换一句”
+
+    navigator.clipboard.writeText(currentText);
+
+    // 极简提示
+    alert("已复制");
+}
+
+load();
+</script>
+
+</body>
+</html>
